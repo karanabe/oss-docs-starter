@@ -1,0 +1,107 @@
+---
+title: Content showcase
+description: Preview common documentation patterns, components, and highlighted code.
+publishedAt: 2026-08-30
+updatedAt: 2026-08-30
+tags:
+  - components
+  - design
+sidebar:
+  order: 2
+---
+
+import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
+
+Use this page as a visual regression check while changing the theme. It intentionally combines the content patterns that appear most often in project documentation.
+
+## A focused procedure
+
+<Steps>
+
+1. Install the package.
+
+   ```sh title="Terminal"
+   pnpm add @acme/client
+   ```
+
+2. Create a client with an explicit endpoint.
+
+   ```ts title="src/client.ts"
+   import { createClient } from '@acme/client';
+
+   export const client = createClient({
+     endpoint: 'https://api.example.com',
+   });
+   ```
+
+3. Run a health check and handle failures at the application boundary.
+
+</Steps>
+
+:::tip[Write for outcomes]
+Start a guide with what the reader will accomplish. Move exhaustive option lists into a reference page.
+:::
+
+## Equivalent choices
+
+Tabs are useful when readers need one of several equivalent commands. The selected package manager is remembered across pages.
+
+<Tabs syncKey="package-manager">
+  <TabItem label="pnpm" icon="seti:pnpm">
+    ```sh
+    pnpm add @acme/client
+    ```
+  </TabItem>
+  <TabItem label="npm" icon="seti:npm">
+    ```sh
+    npm install @acme/client
+    ```
+  </TabItem>
+  <TabItem label="Yarn" icon="seti:yarn">
+    ```sh
+    yarn add @acme/client
+    ```
+  </TabItem>
+</Tabs>
+
+## Highlighted code
+
+The light theme uses **Slack Ochin** and the dark theme uses **Tokyo Night**. Filenames, focused lines, diffs, and copy controls are provided by Expressive Code.
+
+```ts title="src/lib/fetch-release.ts" {7-11}
+export interface Release {
+  version: string;
+  publishedAt: string;
+}
+
+export async function fetchLatestRelease(): Promise<Release> {
+  const response = await fetch('/api/releases/latest');
+  if (!response.ok) {
+    throw new Error(`Release request failed: ${response.status}`);
+  }
+  return response.json() as Promise<Release>;
+}
+```
+
+```diff title="Configuration change"
+-const retries = 1;
++const retries = 3;
+```
+
+## Reference-friendly data
+
+| Option | Type | Default | Purpose |
+| --- | --- | --- | --- |
+| `endpoint` | `string` | — | Base URL for every request. |
+| `retries` | `number` | `3` | Retries transient failures. |
+| `timeout` | `number` | `5000` | Stops stalled requests in milliseconds. |
+
+:::caution[Keep examples honest]
+Sample commands should be safe to copy. Clearly label placeholders, destructive operations, and required credentials.
+:::
+
+## Long-form reading
+
+Good documentation keeps paragraphs compact without making every sentence its own block. A comfortable line length and generous line height reduce the effort needed to move from one line to the next, while a restrained heading scale preserves hierarchy without overwhelming the page.
+
+> Prefer the shortest explanation that gives the reader enough context to make the next correct decision.

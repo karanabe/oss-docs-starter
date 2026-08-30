@@ -1,0 +1,68 @@
+---
+title: 読者を大切にするドキュメント
+description: OSS向けに洗練された、多言語対応ドキュメントスターターです。
+publishedAt: 2026-08-30
+updatedAt: 2026-08-30
+tags:
+  - ドキュメント
+  - 多言語
+template: splash
+hero:
+  title: 読みたくなるドキュメントを。
+  tagline: OSSのための、速くて迷いにくい出発点。英語と日本語のどちらでも、内容がまっすぐ伝わります。
+  actions:
+    - text: 読み始める
+      link: /ja/guides/getting-started/
+      icon: right-arrow
+    - text: 表示サンプルを見る
+      link: /ja/guides/showcase/
+      icon: open-book
+      variant: minimal
+---
+
+<div class="landing-shell not-content">
+  <section class="landing-intro" aria-labelledby="landing-intro-title">
+    <p class="landing-eyebrow">次のリリースに向けて</p>
+    <h2 id="landing-intro-title">個人プロジェクトに必要なものを、必要なだけ。</h2>
+    <p>
+      プロジェクトを見つけた人が、迷わず最初の成功体験まで進める構成です。
+      意図の伝わるナビゲーション、アクセシブルな標準設定、英日のルート、
+      どちらのカラーモードにもなじむコード例が揃っています。
+    </p>
+  </section>
+
+  <div class="landing-principles" aria-label="ドキュメントの設計原則">
+    <section>
+      <span aria-hidden="true">01</span>
+      <h3>答えが見つかる</h3>
+      <p>目的別のガイドと簡潔なリファレンスで、迷いにくい導線をつくります。</p>
+    </section>
+    <section>
+      <span aria-hidden="true">02</span>
+      <h3>無理なく読める</h3>
+      <p>適切な行幅と余白、控えめな現在地表示により、内容へ集中できます。</p>
+    </section>
+    <section>
+      <span aria-hidden="true">03</span>
+      <h3>2言語で届ける</h3>
+      <p>英語をルートに置き、同じ構成の日本語ページを <code>/ja/</code> で公開します。</p>
+    </section>
+  </div>
+
+  <section class="landing-workflow" aria-labelledby="landing-workflow-title">
+    <div>
+      <p class="landing-eyebrow">公開までの短い道のり</p>
+      <h2 id="landing-workflow-title">書く、確認する、届ける。</h2>
+      <p>コンテンツファイルは、クライアント側フレームワーク不要の静的で検索可能なページになります。</p>
+      <a href="/ja/guides/getting-started/">セットアップガイドを開く <span aria-hidden="true">→</span></a>
+    </div>
+    <pre aria-label="ドキュメント作成フローの例"><code>{`$ pnpm install
+$ pnpm dev
+✓ docs ready at localhost:4321
+
+src/content/docs/
+├── guides/
+├── reference/
+└── ja/`}</code></pre>
+  </section>
+</div>
