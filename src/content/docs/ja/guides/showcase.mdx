@@ -1,8 +1,8 @@
 ---
 title: コンテンツ表示サンプル
-description: よく使うドキュメント表現、コンポーネント、コードハイライトを確認できます。
+description: よく使うドキュメント表現、Mermaid図、コンポーネント、コードハイライトを確認できます。
 publishedAt: 2026-08-30
-updatedAt: 2026-08-30
+updatedAt: 2026-09-03
 tags:
   - コンポーネント
   - デザイン
@@ -63,6 +63,82 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
     ```
   </TabItem>
 </Tabs>
+
+## ワークフローを図で示す
+
+文章より図のほうが流れや関係を把握しやすい場合は、`flowchart` を使います。すべてのMermaid図は `mermaid` のコードフェンスで記述でき、配色はサイトのカラーテーマへ自動的に追従します。
+
+```mermaid
+flowchart LR
+    accTitle: ドキュメントを公開するまでの流れ
+    accDescr: 内容を確認してから公開し、チェックに失敗した場合は修正します。
+    Write([内容を書く]) --> Review{チェック成功？}
+    Review -->|はい| Publish([公開する])
+    Review -->|いいえ| Revise[修正する]
+    Revise --> Write
+```
+
+## やり取りの順序を示す
+
+読者、ブラウザ、ドキュメントサイトの間をリクエストが移動する場合など、メッセージの順序が重要なときは `sequenceDiagram` を使います。
+
+```mermaid
+sequenceDiagram
+    accTitle: ドキュメントページを要求するシーケンス
+    accDescr: 読者がガイドを開き、ブラウザがページを要求してからMermaid図を描画します。
+    autonumber
+    actor Reader as 読者
+    participant Browser as ブラウザ
+    participant Docs as ドキュメントサイト
+    Reader->>Browser: ガイドを開く
+    Browser->>Docs: ページを要求する
+    Docs-->>Browser: 生成済みHTMLを返す
+    Browser->>Browser: Mermaid図を描画する
+    Browser-->>Reader: テーマに合ったページを表示する
+```
+
+## 型の構造を示す
+
+実装の詳細を含めず、型の重要なメンバーや型同士の関係を示す場合は `classDiagram` を使います。
+
+```mermaid
+classDiagram
+    accTitle: ドキュメントのコンテンツ型
+    accDescr: GuideとReferencePageはDocumentを継承し、GuideはReferencePageへリンクします。
+    direction LR
+    class Document["ドキュメント"] {
+        +String title
+        +String locale
+        +render()
+    }
+    class Guide["ガイド"] {
+        +String outcome
+    }
+    class ReferencePage["リファレンスページ"] {
+        +List~String~ options
+    }
+    Document <|-- Guide
+    Document <|-- ReferencePage
+    Guide --> ReferencePage : リンクする
+```
+
+## モジュールの関係を示す
+
+Mermaidの `architecture-beta` は、モジュールをグループ化し、生成されたコンテンツがどのように移動するかを示せます。要求の細かい順序ではなく、小さなシステムの概要を示す場合に使います。
+
+```mermaid
+architecture-beta
+    accTitle: ドキュメントサイトのモジュール
+    accDescr: Markdownコンテンツを生成済みページへ変換し、ブラウザで図を描画します。
+    group site(cloud)[ドキュメントサイト]
+    service content(disk)[Markdownコンテンツ] in site
+    service processor(server)[Markdownプロセッサー] in site
+    service page(server)[生成済みページ] in site
+    service renderer(internet)[Mermaidレンダラー] in site
+    content:R --> L:processor
+    processor:R --> L:page
+    page:R --> L:renderer
+```
 
 ## コードハイライト
 

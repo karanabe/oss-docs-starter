@@ -111,6 +111,70 @@ h1#_top {
 	border-radius: 0.35rem;
 }
 
+/* Mermaid diagrams inherit the project palette and mirror the rounded content surfaces. */
+.sl-markdown-content pre.mermaid:not(:where(.not-content *)) {
+	display: grid;
+	place-items: center;
+	min-height: 12rem;
+	margin-block: 1.5rem;
+	overflow-x: auto;
+	border: 1px solid var(--project-accent-border);
+	border-radius: 1rem;
+	background:
+		radial-gradient(circle at 50% 0, var(--project-accent-soft), transparent 70%),
+		var(--sl-color-black);
+	box-shadow: 0 22px 52px -38px hsla(225, 30%, 2%, 0.72);
+	padding: clamp(1.25rem, 4vw, 2.25rem);
+	color: var(--sl-color-gray-2);
+	font-family: var(--sl-font-mono);
+	font-size: var(--sl-text-sm);
+	line-height: 1.65;
+	white-space: pre;
+}
+
+.sl-markdown-content pre.mermaid[data-processed='true']:not(:where(.not-content *)) {
+	font-family: var(--sl-font);
+	white-space: normal;
+}
+
+.sl-markdown-content pre.mermaid:focus-visible:not(:where(.not-content *)) {
+	outline: 3px solid var(--sl-color-accent);
+	outline-offset: 3px;
+}
+
+.sl-markdown-content pre.mermaid svg:not(:where(.not-content *)) {
+	display: block;
+	width: auto;
+	max-width: 100%;
+	height: auto;
+	margin-inline: auto;
+}
+
+.sl-markdown-content pre.mermaid svg .node:not(:where(.not-content *)) {
+	filter: drop-shadow(0 8px 10px hsla(225, 30%, 2%, 0.12));
+}
+
+/* Mermaid's built-in architecture icons use a fixed blue background by default. */
+.sl-markdown-content
+	pre.mermaid
+	svg
+	:is(.architecture-service, .architecture-groups)
+	svg
+	> g
+	> rect:first-child:not(:where(.not-content *)) {
+	fill: var(--sl-color-accent) !important;
+}
+
+.sl-markdown-content pre.mermaid.mermaid-error:not(:where(.not-content *)) {
+	place-items: start;
+	border-color: var(--sl-color-red);
+	color: var(--sl-color-text);
+}
+
+:root[data-theme='light'] .sl-markdown-content pre.mermaid:not(:where(.not-content *)) {
+	box-shadow: 0 22px 52px -40px hsla(220, 24%, 30%, 0.34);
+}
+
 /* Whitespace replaces the prominent title/content rule on light docs pages. */
 :root[data-theme='light'] .content-panel + .content-panel {
 	border-top-color: transparent;
@@ -280,6 +344,11 @@ html[data-has-hero] .hero .tagline {
 
 	.landing-workflow pre {
 		font-size: var(--sl-text-xs);
+	}
+
+	.sl-markdown-content pre.mermaid:not(:where(.not-content *)) {
+		min-height: 9rem;
+		padding: 1rem;
 	}
 }
 

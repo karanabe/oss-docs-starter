@@ -1,8 +1,8 @@
 ---
 title: Content showcase
-description: Preview common documentation patterns, components, and highlighted code.
+description: Preview common documentation patterns, Mermaid diagrams, components, and highlighted code.
 publishedAt: 2026-08-30
-updatedAt: 2026-08-30
+updatedAt: 2026-09-03
 tags:
   - components
   - design
@@ -63,6 +63,82 @@ Tabs are useful when readers need one of several equivalent commands. The select
     ```
   </TabItem>
 </Tabs>
+
+## Map a workflow
+
+Use a `flowchart` for processes and relationships that are easier to scan as a diagram. Every Mermaid diagram uses a fenced `mermaid` block and automatically follows the site color theme.
+
+```mermaid
+flowchart LR
+    accTitle: Documentation publishing workflow
+    accDescr: Content is reviewed before publishing and revised when checks fail.
+    Write([Write content]) --> Review{Checks pass?}
+    Review -->|Yes| Publish([Publish])
+    Review -->|No| Revise[Revise]
+    Revise --> Write
+```
+
+## Trace an interaction
+
+Use a `sequenceDiagram` when message order matters, such as a request moving between a reader, browser, and documentation site.
+
+```mermaid
+sequenceDiagram
+    accTitle: Documentation page request sequence
+    accDescr: A reader opens a guide, the browser requests the page, and then renders its Mermaid diagram.
+    autonumber
+    actor Reader
+    participant Browser
+    participant Docs as Documentation site
+    Reader->>Browser: Open a guide
+    Browser->>Docs: Request the page
+    Docs-->>Browser: Return generated HTML
+    Browser->>Browser: Render the Mermaid diagram
+    Browser-->>Reader: Show the themed page
+```
+
+## Describe a type model
+
+Use a `classDiagram` to show types, their important members, and the relationships between them without including implementation details.
+
+```mermaid
+classDiagram
+    accTitle: Documentation content types
+    accDescr: Guide and ReferencePage inherit from Document, and a guide links to a reference page.
+    direction LR
+    class Document {
+        +String title
+        +String locale
+        +render()
+    }
+    class Guide {
+        +String outcome
+    }
+    class ReferencePage {
+        +List~String~ options
+    }
+    Document <|-- Guide
+    Document <|-- ReferencePage
+    Guide --> ReferencePage : links to
+```
+
+## Show module relationships
+
+Mermaid's `architecture-beta` diagram groups modules and shows how generated content moves between them. Use it for a small system overview rather than detailed request order.
+
+```mermaid
+architecture-beta
+    accTitle: Documentation site modules
+    accDescr: Markdown content is processed into a generated page whose diagrams are rendered in the browser.
+    group site(cloud)[Documentation site]
+    service content(disk)[Markdown content] in site
+    service processor(server)[Markdown processor] in site
+    service page(server)[Generated page] in site
+    service renderer(internet)[Mermaid renderer] in site
+    content:R --> L:processor
+    processor:R --> L:page
+    page:R --> L:renderer
+```
 
 ## Highlighted code
 

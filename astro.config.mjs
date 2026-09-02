@@ -1,6 +1,8 @@
 // @ts-check
 import { defineConfig } from 'astro/config';
+import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
+import rehypeMermaid from './src/plugins/rehype-mermaid.mjs';
 
 // Update these values when adopting the template for a project.
 const project = {
@@ -13,6 +15,9 @@ const project = {
 // https://astro.build/config
 export default defineConfig({
 	site: project.site,
+	markdown: {
+		processor: unified({ rehypePlugins: [rehypeMermaid] }),
+	},
 	integrations: [
 		starlight({
 			title: {

@@ -1,6 +1,6 @@
 # Project documentation
 
-A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, locale-specific tag search, a configurable accent color, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
+A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, locale-specific tag search, a configurable accent color, Mermaid diagrams, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
 
 Use this README as the documentation setup guide after creating a project from the template.
 
@@ -95,6 +95,21 @@ sidebar:
 
 Use `.md` for ordinary pages. Use `.mdx` when importing a Starlight component such as `Steps`, `Tabs`, or `TabItem`. The included content showcase demonstrates procedures, tabs, asides, tables, code titles, highlighted lines, and diffs.
 
+Add a Mermaid diagram to either format with a fenced `mermaid` block:
+
+````md
+```mermaid
+flowchart LR
+    accTitle: Release workflow
+    accDescr: A change is checked before it is released.
+    Change --> Check --> Release
+```
+````
+
+Diagrams use a modern layout derived from the project accent and switch automatically between light and dark colors. The Mermaid renderer is loaded only on pages that contain a diagram. Include `accTitle` and `accDescr` so the same idea remains available to people using assistive technology.
+
+The included content showcase provides matching English and Japanese examples of a flowchart, sequence diagram, class diagram, and architecture diagram.
+
 ## 5. Shape the navigation
 
 `astro.config.mjs` autogenerates the Guides and Reference groups from their directories and translates group labels for Japanese. The header adds direct links to the docs and tag explorer. Add a new top-level section by adding a sidebar group and matching English/Japanese content directories.
@@ -106,7 +121,7 @@ Use stable, descriptive filenames. Moving a content file changes its public URL,
 ## 6. Adjust the visual system
 
 - `src/styles/theme.css` contains project color tokens and neutral surfaces.
-- `src/styles/site.css` contains typography, content spacing, soft active navigation states, code-block finishing, responsive rules, and the landing page.
+- `src/styles/site.css` contains typography, content spacing, soft active navigation states, code-block and diagram finishing, responsive rules, and the landing page.
 - `astro.config.mjs` selects Slack Ochin for light code blocks and Tokyo Night for dark code blocks.
 
 The font stack uses local system fonts only, avoiding an extra network request and layout shift. Keep that default unless the project has an explicit typography requirement and can accept the performance cost.
@@ -129,6 +144,8 @@ Production output is written to `dist/` and can be deployed to any static hostin
 ├── src/
 │   ├── components/        # Header metadata, navigation, and tag explorer UI
 │   ├── content/docs/      # English and Japanese documentation
+│   ├── plugins/           # Markdown transformations, including Mermaid fences
+│   ├── scripts/           # Browser-side Mermaid rendering and theme syncing
 │   ├── styles/            # Project theme and layout rules
 │   └── content.config.ts  # Starlight collection and metadata schema
 ├── astro.config.mjs       # Project, locale, sidebar, and code settings
