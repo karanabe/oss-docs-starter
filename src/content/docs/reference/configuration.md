@@ -2,7 +2,7 @@
 title: Template configuration
 description: Files and settings intended to be changed when adopting the starter.
 publishedAt: 2026-08-30
-updatedAt: 2026-08-30
+updatedAt: 2026-09-06
 tags:
   - configuration
   - reference
@@ -67,8 +67,20 @@ sidebar:
 ---
 ```
 
-`publishedAt` and `updatedAt` accept ISO dates. The dates and tags are emitted as non-visible page metadata, so they do not add a byline or tag row to regular documentation pages.
+`description` appears below the page title on pages without a hero. Keep it short enough to introduce the subject before the main content.
+
+`publishedAt` and `updatedAt` accept ISO dates. Regular pages show a small metadata row below the description when dates or tags are provided. The displayed date is `updatedAt`, or `publishedAt` when no update date is set. Dates are formatted in the page's language using UTC to avoid shifting calendar dates between time zones.
+
+Up to three tags appear directly in the row. Four or more tags are collapsed behind a count that readers can open with a pointer or keyboard. Pages without dates or tags omit the row, as do splash pages. Dates and tags are also emitted as HTML metadata.
 
 The header links to `/tags/`, where readers can search English titles, descriptions, and tags. Japanese content uses localized tags and is queried separately at `/ja/tags/`; the two indexes are never combined. Keep tags short and reuse the same spelling within each language instead of creating near-duplicates.
 
 Use `template: splash` only for wide pages such as the landing page. Regular documentation pages should keep the default layout so both navigation sidebars remain available.
+
+## Typography and content surfaces
+
+Both languages share a font stack that tries Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. The shared weight rules apply to both languages, with body text at its normal weight and article headings at `650`.
+
+Blockquotes use smaller italic text with a subtle neutral background. Japanese quotes use `--sl-text-sm`. When Source Han Code JP is installed, quotes select its local regular and bold faces for Japanese characters and allow the browser to synthesize italics, because that family's italic faces keep Japanese glyphs upright. Other characters and systems without that font use the shared font stack. This exception is scoped to quotes and does not download fonts.
+
+Code has a separate monospace stack: SFMono-Regular, Consolas, Liberation Mono, Menlo, then `monospace`. Developer tools can therefore show Consolas when the inspected element contains code. The rendered fonts depend on installed fonts, browser settings, and the inspected text. The site does not bundle or download fonts.

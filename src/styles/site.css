@@ -40,10 +40,92 @@ h1#_top {
 	text-wrap: pretty;
 }
 
+.sl-markdown-content p + p:not(:where(.not-content *)) {
+	margin-top: 1.5rem;
+}
+
 .sl-markdown-content
 	:not(h1, h2, h3, h4, h5, h6)
 	+ :is(h2, h3, h4):not(:where(.not-content *)) {
 	margin-top: 2em;
+}
+
+.page-description {
+	margin: 1.25rem 0 0;
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-sm);
+	line-height: 1.8;
+	text-wrap: pretty;
+}
+
+.content-panel:has(.page-heading) {
+	padding-block-end: 1.5rem;
+}
+
+.content-panel:has(.page-heading) + .content-panel {
+	padding-block-start: 1.5rem;
+}
+
+.page-metadata {
+	display: flex;
+	flex-wrap: wrap;
+	align-items: baseline;
+	gap: 0.4rem 1rem;
+	margin-top: 1rem;
+	color: var(--sl-color-gray-3);
+	font-size: var(--sl-text-xs);
+	line-height: 1.6;
+}
+
+.page-date {
+	margin: 0;
+}
+
+.page-date time {
+	font-variant-numeric: tabular-nums;
+	white-space: nowrap;
+}
+
+.page-tags {
+	display: flex;
+	flex-wrap: wrap;
+	gap: 0.3rem 0.65rem;
+	margin: 0;
+	padding: 0;
+	list-style: none;
+}
+
+.page-tags li {
+	min-width: 0;
+	overflow-wrap: anywhere;
+}
+
+.page-tags li::before {
+	content: '#';
+	margin-inline-end: 0.15em;
+}
+
+.page-tags-disclosure {
+	min-width: 0;
+}
+
+.page-tags-disclosure summary {
+	width: fit-content;
+	border-radius: 0.25rem;
+	cursor: pointer;
+}
+
+.page-tags-disclosure[open] {
+	flex-basis: 100%;
+}
+
+.page-tags-disclosure .page-tags {
+	margin-top: 0.5rem;
+}
+
+.page-tags-disclosure summary:focus-visible {
+	outline: 2px solid var(--sl-color-accent);
+	outline-offset: 3px;
 }
 
 /* Keep the current page visible without a heavy block of accent color. */
@@ -109,6 +191,40 @@ h1#_top {
 .sl-markdown-content :not(pre) > code:not(:where(.not-content *)) {
 	border: 1px solid var(--sl-color-hairline-light);
 	border-radius: 0.35rem;
+}
+
+/* Source Han Code JP's italic faces keep Japanese glyphs upright. Expose only
+ * its local upright faces so the browser can synthesize the slant in quotes. */
+@font-face {
+	font-family: 'Source Han Code JP Quote';
+	src: local('SourceHanCodeJP-Regular');
+	font-style: normal;
+	font-weight: 400;
+	unicode-range: U+2E80-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-3FFFF;
+}
+
+@font-face {
+	font-family: 'Source Han Code JP Quote';
+	src: local('SourceHanCodeJP-Bold');
+	font-style: normal;
+	font-weight: 700;
+	unicode-range: U+2E80-9FFF, U+F900-FAFF, U+FF00-FFEF, U+20000-3FFFF;
+}
+
+.sl-markdown-content blockquote:not(:where(.not-content *)) {
+	margin-block: 1.5rem;
+	background: color-mix(in srgb, var(--sl-color-gray-5) 20%, var(--sl-color-bg));
+	padding-block: 0.5rem;
+	padding-inline-end: 1rem;
+	font-family: 'Source Han Code JP Quote', var(--__sl-font);
+	font-size: 0.9375rem;
+	font-style: italic;
+	/* Allow italics for system fonts without a dedicated italic face, including Japanese. */
+	font-synthesis: style;
+}
+
+.sl-markdown-content blockquote:lang(ja):not(:where(.not-content *)) {
+	font-size: var(--sl-text-sm);
 }
 
 /* Mermaid diagrams inherit the project palette and mirror the rounded content surfaces. */

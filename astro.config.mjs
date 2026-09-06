@@ -37,6 +37,7 @@ export default defineConfig({
 			components: {
 				Head: './src/components/MetadataHead.astro',
 				SiteTitle: './src/components/SiteNavigation.astro',
+				PageTitle: './src/components/PageTitle.astro',
 			},
 			expressiveCode: {
 				// Slack Ochin is the light theme; Tokyo Night is the dark theme.

@@ -91,7 +91,7 @@ sidebar:
 ---
 ```
 
-`publishedAt`, `updatedAt`, and `tags` are optional. They are stored as non-visible metadata and do not appear in the regular page layout. Use ISO dates and keep tag spellings consistent within each language.
+`publishedAt`, `updatedAt`, and `tags` are optional. Regular pages show the description below the title, followed by a small metadata row when dates or tags are provided. The row uses `updatedAt`, falling back to `publishedAt`, and shows up to three tags directly; four or more tags are collapsed behind a tag count. Splash pages omit the metadata row. Dates and tags are also retained in the page's HTML metadata. Use ISO dates and keep tag spellings consistent within each language.
 
 Use `.md` for ordinary pages. Use `.mdx` when importing a Starlight component such as `Steps`, `Tabs`, or `TabItem`. The included content showcase demonstrates procedures, tabs, asides, tables, code titles, highlighted lines, and diffs.
 
@@ -122,9 +122,10 @@ Use stable, descriptive filenames. Moving a content file changes its public URL,
 
 - `src/styles/theme.css` contains project color tokens and neutral surfaces.
 - `src/styles/site.css` contains typography, content spacing, soft active navigation states, code-block and diagram finishing, responsive rules, and the landing page.
+- `src/components/PageTitle.astro` renders the page description and optional date and tags.
 - `astro.config.mjs` selects Slack Ochin for light code blocks and Tokyo Night for dark code blocks.
 
-The font stack uses local system fonts only, avoiding an extra network request and layout shift. Keep that default unless the project has an explicit typography requirement and can accept the performance cost.
+Both languages share the same local font stack: Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. Blockquotes select Source Han Code JP's local upright faces for Japanese characters when installed, allowing synthesized italics because that family's italic faces leave Japanese glyphs upright. Other characters and systems without that font use the shared stack. Code has a separate monospace stack, starting with SFMono-Regular and Consolas. No font files are bundled or downloaded; installed fonts and browser settings determine the rendered faces.
 
 ## 7. Validate before publishing
 
