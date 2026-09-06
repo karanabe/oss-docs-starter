@@ -126,6 +126,8 @@ Escape a literal dollar sign as `\$` when it could otherwise be interpreted as m
 
 `astro.config.mjs` autogenerates the Guides and Reference groups from their directories and translates group labels for Japanese. The header adds direct links to the docs and tag explorer. Add a new top-level section by adding a sidebar group and matching English/Japanese content directories.
 
+On mobile, the docs and tag links move into the navigation menu to leave room for the site title. Pages without a sidebar, including the homepage and tag explorer, provide a compact menu with the same links and theme and language controls.
+
 The tag explorer at `/tags/` searches only English entries. Its counterpart at `/ja/tags/` searches only Japanese entries, including localized title, description, and tag text. This strict collection split prevents a Japanese query from returning English fallback content. The regular Pagefind search index also receives tags as invisible filters and keeps its language indexes separate.
 
 Use stable, descriptive filenames. Moving a content file changes its public URL, so add an Astro redirect when preserving an old published route matters.
@@ -133,11 +135,13 @@ Use stable, descriptive filenames. Moving a content file changes its public URL,
 ## 6. Adjust the visual system
 
 - `src/styles/theme.css` contains project color tokens and neutral surfaces.
-- `src/styles/site.css` contains typography, content spacing, soft active navigation states, code-block and diagram finishing, responsive rules, and the landing page.
-- `src/components/PageTitle.astro` renders the page description and optional date and tags.
+- `src/styles/site.css` contains English and Japanese typography, compact page metadata, consistent aside surfaces, navigation states, code-block and diagram finishing, responsive rules, and the landing page.
+- `src/components/PageTitle.astro` renders the page description and optional date and tags. `PrimaryNavigation.astro` supplies the shared docs and tag links used in desktop and mobile navigation.
 - `astro.config.mjs` selects Slack Ochin for light code blocks and Tokyo Night for dark code blocks.
 
 Both languages share the same local font stack: Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. Blockquotes select Source Han Code JP's local upright faces for Japanese characters when installed, allowing synthesized italics because that family's italic faces leave Japanese glyphs upright. Other characters and systems without that font use the shared stack. Code has a separate monospace stack, starting with SFMono-Regular and Consolas. No font files are bundled or downloaded; installed fonts and browser settings determine the rendered faces.
+
+Japanese headings use language-specific spacing and line height. For a short hero title, an optional `<wbr>` in `hero.title` marks a natural phrase boundary without forcing a line break on every screen size.
 
 The desktop and mobile tables of contents include H2 through H4 in both languages. Adjust the heading range with Starlight's `tableOfContents` option in `astro.config.mjs`.
 

@@ -77,12 +77,18 @@ Up to three tags appear directly in the row. Four or more tags are collapsed beh
 
 The header links to `/tags/`, where readers can search English titles, descriptions, and tags. Japanese content uses localized tags and is queried separately at `/ja/tags/`; the two indexes are never combined. Keep tags short and reuse the same spelling within each language instead of creating near-duplicates.
 
+On mobile, the docs and tag links are inside the navigation menu. Pages without a sidebar have a compact menu that also includes theme and language controls.
+
 Use `template: splash` only for wide pages such as the landing page. Regular documentation pages should keep the default layout so both navigation sidebars remain available.
 
 ## Typography and content surfaces
+
+`src/styles/site.css` controls the shared appearance for project documentation and explanatory articles. Japanese headings use their own spacing and line height with local system fonts. An optional `<wbr>` in `hero.title` can mark a natural phrase boundary for responsive wrapping.
 
 Both languages share a font stack that tries Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. The shared weight rules apply to both languages, with body text at its normal weight and article headings at `650`.
 
 Blockquotes use smaller italic text with a subtle neutral background. Japanese quotes use `--sl-text-sm`. When Source Han Code JP is installed, quotes select its local regular and bold faces for Japanese characters and allow the browser to synthesize italics, because that family's italic faces keep Japanese glyphs upright. Other characters and systems without that font use the shared font stack. This exception is scoped to quotes and does not download fonts.
 
 Code has a separate monospace stack: SFMono-Regular, Consolas, Liberation Mono, Menlo, then `monospace`. Developer tools can therefore show Consolas when the inspected element contains code. The rendered fonts depend on installed fonts, browser settings, and the inspected text. The site does not bundle or download fonts.
+
+Asides share rounded corners and a subtle background. Notes and tips follow the project accent; cautions and dangers retain their warning colors, labels, and icons. Change the accent through `--project-accent-hue` in `src/styles/theme.css`.

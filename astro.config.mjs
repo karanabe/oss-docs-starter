@@ -45,7 +45,9 @@ export default defineConfig({
 			],
 			components: {
 				Head: './src/components/MetadataHead.astro',
+				Header: './src/components/SiteHeader.astro',
 				SiteTitle: './src/components/SiteNavigation.astro',
+				Sidebar: './src/components/SiteSidebar.astro',
 				PageTitle: './src/components/PageTitle.astro',
 			},
 			expressiveCode: {
