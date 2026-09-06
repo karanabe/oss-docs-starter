@@ -24,6 +24,8 @@ The starter keeps project-specific choices in a few visible locations. Change th
 | Navigation | `astro.config.mjs` | Sidebar groups and labels |
 | Page metadata | `src/content.config.ts` | Publication dates, update dates, and tags |
 
+The in-page table of contents includes H2 through H4 headings in both languages. Set this range with `tableOfContents.minHeadingLevel` and `tableOfContents.maxHeadingLevel` in the Starlight configuration in `astro.config.mjs`. The same headings appear in the mobile table of contents.
+
 ## Locale layout
 
 English is the root locale and Japanese uses the `ja` directory. Every translated pair should have the same path after the locale segment.

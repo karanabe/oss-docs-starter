@@ -24,6 +24,8 @@ sidebar:
 | ナビゲーション | `astro.config.mjs` | サイドバーのグループとラベル |
 | ページメタデータ | `src/content.config.ts` | 公開日、更新日、タグ |
 
+ページ内の目次には、日英ともにH2からH4までの見出しを表示します。表示する範囲は、`astro.config.mjs` 内のStarlight設定にある `tableOfContents.minHeadingLevel` と `tableOfContents.maxHeadingLevel` で指定します。モバイルの目次にも同じ見出しを表示します。
+
 ## 言語ごとの配置
 
 英語はルート言語、日本語は `ja` ディレクトリを使います。翻訳されたページは、言語部分より後ろのパスを揃えます。

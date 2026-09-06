@@ -46,6 +46,7 @@ export default defineConfig({
 				styleOverrides: { borderRadius: '0.75rem' },
 			},
 			lastUpdated: false,
+			tableOfContents: { minHeadingLevel: 2, maxHeadingLevel: 4 },
 			sidebar: [
 				{
 					label: 'Guides',

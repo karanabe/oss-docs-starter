@@ -127,6 +127,8 @@ Use stable, descriptive filenames. Moving a content file changes its public URL,
 
 Both languages share the same local font stack: Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. Blockquotes select Source Han Code JP's local upright faces for Japanese characters when installed, allowing synthesized italics because that family's italic faces leave Japanese glyphs upright. Other characters and systems without that font use the shared stack. Code has a separate monospace stack, starting with SFMono-Regular and Consolas. No font files are bundled or downloaded; installed fonts and browser settings determine the rendered faces.
 
+The desktop and mobile tables of contents include H2 through H4 in both languages. Adjust the heading range with Starlight's `tableOfContents` option in `astro.config.mjs`.
+
 ## 7. Validate before publishing
 
 ```sh
