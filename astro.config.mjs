@@ -2,6 +2,8 @@
 import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import starlight from '@astrojs/starlight';
+import rehypeKatex from 'rehype-katex';
+import remarkMath from 'remark-math';
 import rehypeMermaid from './src/plugins/rehype-mermaid.mjs';
 
 // Update these values when adopting the template for a project.
@@ -16,7 +18,10 @@ const project = {
 export default defineConfig({
 	site: project.site,
 	markdown: {
-		processor: unified({ rehypePlugins: [rehypeMermaid] }),
+		processor: unified({
+			remarkPlugins: [remarkMath],
+			rehypePlugins: [rehypeKatex, rehypeMermaid],
+		}),
 	},
 	integrations: [
 		starlight({
@@ -33,7 +38,11 @@ export default defineConfig({
 			editLink: {
 				baseUrl: `${project.repository}/edit/main/`,
 			},
-			customCss: ['./src/styles/theme.css', './src/styles/site.css'],
+			customCss: [
+				'katex/dist/katex.min.css',
+				'./src/styles/theme.css',
+				'./src/styles/site.css',
+			],
 			components: {
 				Head: './src/components/MetadataHead.astro',
 				SiteTitle: './src/components/SiteNavigation.astro',

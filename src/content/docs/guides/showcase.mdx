@@ -1,6 +1,6 @@
 ---
 title: Content showcase
-description: Preview common documentation patterns, Mermaid diagrams, components, and highlighted code.
+description: Preview common documentation patterns, equations, Mermaid diagrams, components, and highlighted code.
 publishedAt: 2026-08-30
 updatedAt: 2026-09-06
 tags:
@@ -63,6 +63,16 @@ Tabs are useful when readers need one of several equivalent commands. The select
     ```
   </TabItem>
 </Tabs>
+
+## Write mathematical notation
+
+Use single dollar signs for inline notation, such as $E = mc^2$. Put longer equations between double dollar signs so they have their own line:
+
+$$
+\sum_{k=1}^{n} k = \frac{n(n+1)}{2}
+$$
+
+Equations are rendered with KaTeX during the production build and remain readable by assistive technology without client-side JavaScript.
 
 ## Map a workflow
 

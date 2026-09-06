@@ -1,6 +1,6 @@
 ---
 title: コンテンツ表示サンプル
-description: よく使うドキュメント表現、Mermaid図、コンポーネント、コードハイライトを確認できます。
+description: よく使うドキュメント表現、数式、Mermaid図、コンポーネント、コードハイライトを確認できます。
 publishedAt: 2026-08-30
 updatedAt: 2026-09-06
 tags:
@@ -63,6 +63,16 @@ import { Steps, Tabs, TabItem } from '@astrojs/starlight/components';
     ```
   </TabItem>
 </Tabs>
+
+## 数式を記述する
+
+インライン数式は、$E = mc^2$ のように1つのドル記号で囲みます。長い数式は2つのドル記号で囲み、独立した行に表示します。
+
+$$
+\sum_{k=1}^{n} k = \frac{n(n+1)}{2}
+$$
+
+数式は本番ビルド時にKaTeXで描画されます。クライアント側のJavaScriptを使わず、支援技術でも内容を読み取れます。
 
 ## ワークフローを図で示す
 

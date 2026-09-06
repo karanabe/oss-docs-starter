@@ -1,6 +1,6 @@
 # Project documentation
 
-A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, locale-specific tag search, a configurable accent color, Mermaid diagrams, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
+A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, locale-specific tag search, a configurable accent color, KaTeX equations, Mermaid diagrams, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
 
 Use this README as the documentation setup guide after creating a project from the template.
 
@@ -93,7 +93,7 @@ sidebar:
 
 `publishedAt`, `updatedAt`, and `tags` are optional. Regular pages show the description below the title, followed by a small metadata row when dates or tags are provided. The row uses `updatedAt`, falling back to `publishedAt`, and shows up to three tags directly; four or more tags are collapsed behind a tag count. Splash pages omit the metadata row. Dates and tags are also retained in the page's HTML metadata. Use ISO dates and keep tag spellings consistent within each language.
 
-Use `.md` for ordinary pages. Use `.mdx` when importing a Starlight component such as `Steps`, `Tabs`, or `TabItem`. The included content showcase demonstrates procedures, tabs, asides, tables, code titles, highlighted lines, and diffs.
+Use `.md` for ordinary pages. Use `.mdx` when importing a Starlight component such as `Steps`, `Tabs`, or `TabItem`. The included content showcase demonstrates procedures, tabs, asides, equations, diagrams, tables, code titles, highlighted lines, and diffs.
 
 Add a Mermaid diagram to either format with a fenced `mermaid` block:
 
@@ -109,6 +109,18 @@ flowchart LR
 Diagrams use a modern layout derived from the project accent and switch automatically between light and dark colors. The Mermaid renderer is loaded only on pages that contain a diagram. Include `accTitle` and `accDescr` so the same idea remains available to people using assistive technology.
 
 The included content showcase provides matching English and Japanese examples of a flowchart, sequence diagram, class diagram, and architecture diagram.
+
+Write inline math between single dollar signs and display math between double dollar signs. Both Markdown and MDX pages render the notation with KaTeX at build time, so equations do not require client-side JavaScript.
+
+```md
+The energy equation is $E = mc^2$.
+
+$$
+\sum_{k=1}^{n} k = \frac{n(n+1)}{2}
+$$
+```
+
+Escape a literal dollar sign as `\$` when it could otherwise be interpreted as math. See the content showcase for rendered inline and display examples.
 
 ## 5. Shape the navigation
 
