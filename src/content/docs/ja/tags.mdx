@@ -1,6 +1,6 @@
 ---
-title: タグから探す
-description: 日本語ドキュメントをタイトル、説明、タグから検索できます。
+title: ドキュメントをタグから探す
+description: Notesを混在させず、日本語ドキュメントをタイトル、説明、タグから検索できます。
 template: splash
 tableOfContents: false
 pagefind: false
@@ -13,6 +13,6 @@ sidebar:
 
 import TagExplorer from '../../../components/TagExplorer.astro';
 
-日本語ドキュメントを検索・絞り込みできます。このページには日本語ロケールのコンテンツだけが表示されます。
+日本語ドキュメントを検索・絞り込みできます。Notesは専用の検索に分かれているため、短いプロジェクトメモがガイドやリファレンスに混ざりません。
 
-<TagExplorer locale="ja" />
+<TagExplorer locale="ja" scope="docs" />

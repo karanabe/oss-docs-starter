@@ -2,14 +2,19 @@
 const { locale } = Astro.locals.starlightRoute;
 const isJapanese = locale === 'ja';
 const homePath = isJapanese ? '/ja/' : '/';
+const notesPath = isJapanese ? '/ja/notes/' : '/notes/';
 const tagsPath = isJapanese ? '/ja/tags/' : '/tags/';
 const pathname = Astro.url.pathname;
+const isNotesPath = pathname === notesPath || pathname.startsWith(notesPath);
 const links = [
 	{
 		label: isJapanese ? 'ドキュメント' : 'Docs',
 		href: `${homePath}guides/getting-started/`,
-		current: pathname !== homePath && pathname !== tagsPath,
+		current: pathname !== homePath && pathname !== tagsPath && !isNotesPath,
 	},
+	...(__PROJECT_NOTES_ENABLED__
+		? [{ label: 'Notes', href: notesPath, current: isNotesPath }]
+		: []),
 	{
 		label: isJapanese ? 'タグ' : 'Tags',
 		href: tagsPath,

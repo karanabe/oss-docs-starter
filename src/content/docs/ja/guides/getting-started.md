@@ -2,7 +2,7 @@
 title: はじめに
 description: ドキュメントスターターをOSSプロジェクト向けに設定します。
 publishedAt: 2026-08-30
-updatedAt: 2026-08-30
+updatedAt: 2026-09-13
 tags:
   - セットアップ
   - 初心者
@@ -37,10 +37,13 @@ const project = {
   description: 'Command-line tools for dependable release automation.',
   repository: 'https://github.com/acme/acme-cli',
   site: 'https://docs.acme.example',
+  features: {
+    notes: true,
+  },
 };
 ```
 
-これらの値は、ブラウザーのタイトル、説明メタデータ、正規URL、サイトマップ、GitHubリンク、編集リンクに使われます。
+プロジェクト情報は、ブラウザーのタイトル、説明メタデータ、正規URL、サイトマップ、GitHubリンク、編集リンクに使われます。Notesセクションが不要なプロジェクトでは、`features.notes` を `false` にしてください。
 
 ## アクセントカラーを選ぶ
 

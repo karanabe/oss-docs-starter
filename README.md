@@ -1,6 +1,6 @@
 # Project documentation
 
-A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, locale-specific tag search, a configurable accent color, KaTeX equations, Mermaid diagrams, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
+A polished Astro Starlight starter for an open-source project's documentation. It ships with an English root site, matching Japanese routes, an optional Notes section, separate tag explorers for documentation and Notes, a configurable accent color, KaTeX equations, Mermaid diagrams, fast system fonts, and code blocks styled with Slack Ochin and Tokyo Night.
 
 Use this README as the documentation setup guide after creating a project from the template.
 
@@ -37,6 +37,9 @@ const project = {
   description: 'Clear, practical documentation for an open-source project.',
   repository: 'https://github.com/your-name/your-project',
   site: 'https://docs.example.com',
+  features: {
+    notes: true,
+  },
 };
 ```
 
@@ -64,11 +67,17 @@ Starlight maps Markdown and MDX files in `src/content/docs/` to routes. English 
 src/content/docs/
 ├── index.mdx                         → /
 ├── guides/getting-started.md         → /guides/getting-started/
+├── notes/index.mdx                   → /notes/
+├── notes/tags.mdx                    → /notes/tags/
+├── notes/welcome.md                  → /notes/welcome/
 ├── reference/configuration.md        → /reference/configuration/
 ├── tags.mdx                          → /tags/
 └── ja/
     ├── index.mdx                     → /ja/
     ├── guides/getting-started.md     → /ja/guides/getting-started/
+    ├── notes/index.mdx               → /ja/notes/
+    ├── notes/tags.mdx                → /ja/notes/tags/
+    ├── notes/welcome.md              → /ja/notes/welcome/
     ├── reference/configuration.md    → /ja/reference/configuration/
     └── tags.mdx                      → /ja/tags/
 ```
@@ -122,21 +131,40 @@ $$
 
 Escape a literal dollar sign as `\$` when it could otherwise be interpreted as math. See the content showcase for rendered inline and display examples.
 
-## 5. Shape the navigation
+## 5. Publish project Notes
 
-`astro.config.mjs` autogenerates the Guides and Reference groups from their directories and translates group labels for Japanese. The header adds direct links to the docs and tag explorer. Add a new top-level section by adding a sidebar group and matching English/Japanese content directories.
+Notes is a small blog-like section for dated project updates, decisions, experiments, and discoveries. Add English Markdown files to `src/content/docs/notes/` and matching Japanese files to `src/content/docs/ja/notes/`. The included landing pages introduce Notes and list entries by `publishedAt`, newest first. Notes stays out of the documentation sidebar.
 
-On mobile, the docs and tag links move into the navigation menu to leave room for the site title. Pages without a sidebar, including the homepage and tag explorer, provide a compact menu with the same links and theme and language controls.
+Copy `notes/welcome.md` to a stable, descriptive filename in both language directories, then update its frontmatter and body. Add `updatedAt` when a published note changes meaning.
 
-The tag explorer at `/tags/` searches only English entries. Its counterpart at `/ja/tags/` searches only Japanese entries, including localized title, description, and tag text. This strict collection split prevents a Japanese query from returning English fallback content. The regular Pagefind search index also receives tags as invisible filters and keeps its language indexes separate.
+Documentation tags are searched at `/tags/` and `/ja/tags/`. Notes has independent tag explorers at `/notes/tags/` and `/ja/notes/tags/`, linked from each Notes landing page. The two scopes do not mix results.
+
+The feature is controlled from the `project` object in `astro.config.mjs`:
+
+```js
+features: {
+  notes: true,
+},
+```
+
+Set `notes` to `false` to remove Notes header navigation, routes, tag explorer, and Pagefind entries from both development and production builds. The Markdown source remains available to restore later by setting the value back to `true`.
+
+## 6. Shape the navigation
+
+`astro.config.mjs` autogenerates only the Guides and Reference groups in the documentation sidebar and translates their labels for Japanese. Notes is intentionally available from the header instead of the sidebar. Add a new documentation section by adding a sidebar group and matching English/Japanese content directories.
+
+On mobile, the docs, optional Notes, and tag links move into the navigation menu to leave room for the site title. Pages without a sidebar, including the homepage and tag explorer, provide a compact menu with the same links and theme and language controls.
+
+The documentation tag explorers at `/tags/` and `/ja/tags/` exclude Notes. The Notes explorers at `/notes/tags/` and `/ja/notes/tags/` exclude guides and reference pages. Each explorer also stays within its language, so Japanese queries never return English fallback content. The regular Pagefind search index still covers both content types and keeps its language indexes separate.
 
 Use stable, descriptive filenames. Moving a content file changes its public URL, so add an Astro redirect when preserving an old published route matters.
 
-## 6. Adjust the visual system
+## 7. Adjust the visual system
 
 - `src/styles/theme.css` contains project color tokens and neutral surfaces.
 - `src/styles/site.css` contains English and Japanese typography, compact page metadata, consistent aside surfaces, navigation states, code-block and diagram finishing, responsive rules, and the landing page.
-- `src/components/PageTitle.astro` renders the page description and optional date and tags. `PrimaryNavigation.astro` supplies the shared docs and tag links used in desktop and mobile navigation.
+- `src/components/PageTitle.astro` renders the page description and optional date and tags. `PrimaryNavigation.astro` supplies the shared docs, optional Notes, and tag links used in desktop and mobile navigation.
+- `src/components/NotesIndex.astro` renders each locale's Notes list in reverse chronological order. `TagExplorer.astro` keeps documentation and Notes tags in separate scopes.
 - `astro.config.mjs` selects Slack Ochin for light code blocks and Tokyo Night for dark code blocks.
 
 Both languages share the same local font stack: Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. Blockquotes select Source Han Code JP's local upright faces for Japanese characters when installed, allowing synthesized italics because that family's italic faces leave Japanese glyphs upright. Other characters and systems without that font use the shared stack. Code has a separate monospace stack, starting with SFMono-Regular and Consolas. No font files are bundled or downloaded; installed fonts and browser settings determine the rendered faces.
@@ -145,7 +173,7 @@ Japanese headings use language-specific spacing and line height. For a short her
 
 The desktop and mobile tables of contents include H2 through H4 in both languages. Adjust the heading range with Starlight's `tableOfContents` option in `astro.config.mjs`.
 
-## 7. Validate before publishing
+## 8. Validate before publishing
 
 ```sh
 pnpm build
@@ -161,7 +189,7 @@ Production output is written to `dist/` and can be deployed to any static hostin
 .
 ├── public/                 # Static files such as the favicon
 ├── src/
-│   ├── components/        # Header metadata, navigation, and tag explorer UI
+│   ├── components/        # Header metadata, navigation, Notes, and tag explorer UI
 │   ├── content/docs/      # English and Japanese documentation
 │   ├── plugins/           # Markdown transformations, including Mermaid fences
 │   ├── scripts/           # Browser-side Mermaid rendering and theme syncing

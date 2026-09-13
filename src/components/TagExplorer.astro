@@ -3,27 +3,36 @@ import { getCollection } from 'astro:content';
 
 interface Props {
 	locale: 'en' | 'ja';
+	scope?: 'docs' | 'notes';
 }
 
-const { locale } = Astro.props;
+const { locale, scope = 'docs' } = Astro.props;
 const isJapanese = locale === 'ja';
+const isNotesScope = scope === 'notes';
+const notesRoot = isJapanese ? 'ja/notes' : 'notes';
 const copy = isJapanese
 	? {
 			allTags: 'すべて',
 			clear: '条件をクリア',
-			empty: '条件に一致するドキュメントはありません。',
-			results: '件のドキュメント',
-			searchLabel: 'タイトル、説明、タグを検索',
-			searchPlaceholder: '例: セットアップ',
+			empty: isNotesScope
+				? '条件に一致するメモはありません。'
+				: '条件に一致するドキュメントはありません。',
+			searchLabel: isNotesScope
+				? 'Notesのタイトル、説明、タグを検索'
+				: 'ドキュメントのタイトル、説明、タグを検索',
+			searchPlaceholder: isNotesScope ? '例: プロジェクト' : '例: セットアップ',
 			tagListLabel: 'タグで絞り込む',
 		}
 	: {
 			allTags: 'All tags',
 			clear: 'Clear filters',
-			empty: 'No documents match these filters.',
-			results: 'documents',
-			searchLabel: 'Search titles, descriptions, and tags',
-			searchPlaceholder: 'For example: setup',
+			empty: isNotesScope
+				? 'No notes match these filters.'
+				: 'No documents match these filters.',
+			searchLabel: isNotesScope
+				? 'Search Notes titles, descriptions, and tags'
+				: 'Search documentation titles, descriptions, and tags',
+			searchPlaceholder: isNotesScope ? 'For example: project' : 'For example: setup',
 			tagListLabel: 'Filter by tag',
 		};
 
@@ -32,7 +41,13 @@ const documents = (await getCollection('docs'))
 		const matchesLocale = isJapanese
 			? entry.id === 'ja' || entry.id.startsWith('ja/')
 			: entry.id !== 'ja' && !entry.id.startsWith('ja/');
-		return matchesLocale && !entry.data.draft && entry.data.tags.length > 0;
+		const isNotesEntry = entry.id === notesRoot || entry.id.startsWith(`${notesRoot}/`);
+		const matchesScope = isNotesScope
+			? entry.id.startsWith(`${notesRoot}/`) &&
+				entry.id !== `${notesRoot}/index` &&
+				entry.id !== `${notesRoot}/tags`
+			: !isNotesEntry;
+		return matchesLocale && matchesScope && !entry.data.draft && entry.data.tags.length > 0;
 	})
 	.map((entry) => {
 		const path = entry.id.replace(/(^|\/)index$/, '$1').replace(/\/$/, '');
@@ -52,9 +67,14 @@ for (const document of documents) {
 	}
 }
 const tags = [...tagCounts].sort(([a], [b]) => a.localeCompare(b, locale));
+const initialResultCount = isJapanese
+	? `${documents.length}${isNotesScope ? '件のメモ' : '件のドキュメント'}`
+	: `${documents.length} ${isNotesScope
+		? (documents.length === 1 ? 'note' : 'notes')
+		: (documents.length === 1 ? 'document' : 'documents')}`;
 ---
 
-<tag-explorer class="tag-explorer not-content" data-locale={locale}>
+<tag-explorer class="tag-explorer not-content" data-locale={locale} data-scope={scope}>
 	<form class="tag-search" role="search">
 		<label for={`tag-search-${locale}`}>{copy.searchLabel}</label>
 		<div class="tag-search-row">
@@ -84,7 +104,7 @@ const tags = [...tagCounts].sort(([a], [b]) => a.localeCompare(b, locale));
 	</div>
 
 	<p class="tag-result-count" aria-live="polite" aria-atomic="true" data-result-count>
-		{documents.length}{isJapanese ? '' : ' '}{copy.results}
+		{initialResultCount}
 	</p>
 
 	<ul class="tag-results">
@@ -114,6 +134,7 @@ const tags = [...tagCounts].sort(([a], [b]) => a.localeCompare(b, locale));
 	class TagExplorer extends HTMLElement {
 		connectedCallback() {
 			const locale = this.dataset.locale || 'en';
+			const scope = this.dataset.scope || 'docs';
 			const form = this.querySelector('form');
 			const input = this.querySelector<HTMLInputElement>('[data-query]');
 			const count = this.querySelector<HTMLElement>('[data-result-count]');
@@ -139,18 +160,21 @@ const tags = [...tagCounts].sort(([a], [b]) => a.localeCompare(b, locale));
 				}
 
 				count.textContent = locale === 'ja'
-					? `${visible}件のドキュメント`
-					: `${visible} ${visible === 1 ? 'document' : 'documents'}`;
+					? `${visible}${scope === 'notes' ? '件のメモ' : '件のドキュメント'}`
+					: `${visible} ${scope === 'notes'
+						? (visible === 1 ? 'note' : 'notes')
+						: (visible === 1 ? 'document' : 'documents')}`;
 				empty.hidden = visible !== 0;
 			};
 
 			form.addEventListener('submit', (event) => event.preventDefault());
 			form.addEventListener('reset', () => {
 				selectedTag = '';
+				input.value = '';
 				for (const button of tagButtons) {
 					button.setAttribute('aria-pressed', String(button.dataset.tag === ''));
 				}
-				queueMicrotask(update);
+				update();
 			});
 			input.addEventListener('input', update);
 

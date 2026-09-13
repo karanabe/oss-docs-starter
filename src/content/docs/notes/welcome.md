@@ -1,0 +1,18 @@
+---
+title: A place for project notes
+description: Why this starter keeps short-lived project context separate from its guides.
+publishedAt: 2026-09-13
+tags:
+  - project
+  - notes
+sidebar:
+  hidden: true
+---
+
+Notes are useful for release updates, design decisions, experiments, and discoveries that readers may want to revisit. They are dated and listed with the newest memo first, while guides and reference pages stay focused on their own jobs.
+
+## Write the next note
+
+Copy this file to a stable, descriptive filename in `src/content/docs/notes/`. Update the title, description, publication date, tags, and body, then create the matching Japanese file under `src/content/docs/ja/notes/`.
+
+Use `updatedAt` when the meaning of a published note changes. The Notes index and page metadata will then identify it as updated.

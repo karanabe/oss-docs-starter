@@ -12,11 +12,20 @@ const project = {
 	description: 'Clear, practical documentation for an open-source project.',
 	repository: 'https://github.com/your-name/your-project',
 	site: 'https://docs.example.com',
+	features: {
+		// Set to false to omit Notes header navigation, routes, and search entries.
+		notes: true,
+	},
 };
 
 // https://astro.build/config
 export default defineConfig({
 	site: project.site,
+	vite: {
+		define: {
+			__PROJECT_NOTES_ENABLED__: JSON.stringify(project.features.notes),
+		},
+	},
 	markdown: {
 		processor: unified({
 			remarkPlugins: [remarkMath],

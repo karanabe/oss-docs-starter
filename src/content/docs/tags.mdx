@@ -1,6 +1,6 @@
 ---
-title: Browse by tag
-description: Find English documentation by title, description, or tag.
+title: Browse documentation by tag
+description: Find English documentation by title, description, or tag without mixing in Notes.
 template: splash
 tableOfContents: false
 pagefind: false
@@ -13,6 +13,6 @@ sidebar:
 
 import TagExplorer from '../../components/TagExplorer.astro';
 
-Search and filter the English documentation. This page only includes content from the English root locale.
+Search and filter English documentation. Notes stay in their own explorer, so short project updates do not mix with guides and reference pages.
 
-<TagExplorer locale="en" />
+<TagExplorer locale="en" scope="docs" />

@@ -2,7 +2,7 @@
 title: Template configuration
 description: Files and settings intended to be changed when adopting the starter.
 publishedAt: 2026-08-30
-updatedAt: 2026-09-06
+updatedAt: 2026-09-13
 tags:
   - configuration
   - reference
@@ -22,6 +22,7 @@ The starter keeps project-specific choices in a few visible locations. Change th
 | Accent hue | `src/styles/theme.css` | Accent palette in light and dark modes |
 | Layout rules | `src/styles/site.css` | Typography, spacing, navigation, and landing page |
 | Navigation | `astro.config.mjs` | Sidebar groups and labels |
+| Notes feature | `astro.config.mjs` | Notes header navigation, routes, and search entries |
 | Page metadata | `src/content.config.ts` | Publication dates, update dates, and tags |
 
 The in-page table of contents includes H2 through H4 headings in both languages. Set this range with `tableOfContents.minHeadingLevel` and `tableOfContents.maxHeadingLevel` in the Starlight configuration in `astro.config.mjs`. The same headings appear in the mobile table of contents.
@@ -36,6 +37,27 @@ English is the root locale and Japanese uses the `ja` directory. Every translate
 ```
 
 Starlight provides translated interface labels and connects matching pages in the language picker.
+
+## Notes
+
+Notes is an optional place for dated project updates, decisions, and experiments. It uses regular Markdown pages under `src/content/docs/notes/`, with matching Japanese files under `src/content/docs/ja/notes/`. The landing pages introduce the section and list published notes by date, newest first. Notes is linked from the header and does not appear in the documentation sidebar.
+
+Turn the feature on or off in the `project.features` object in `astro.config.mjs`:
+
+```js title="astro.config.mjs"
+const project = {
+  // Project metadata...
+  features: {
+    notes: true,
+  },
+};
+```
+
+Set `notes` to `false` to omit the Notes header link, content routes, dedicated tag explorer, and Pagefind entries from development and production builds. The source files stay in place, so setting the value back to `true` restores the feature.
+
+To add a memo, copy the sample `notes/welcome.md` file to a stable, descriptive filename and update its frontmatter and body. Create the Japanese page at the matching relative path. `publishedAt` controls its position in the Notes index; add `updatedAt` when an existing note changes meaning.
+
+Documentation tags are searched at `/tags/` and `/ja/tags/`; these pages exclude Notes. Notes tags use `/notes/tags/` and `/ja/notes/tags/`, which exclude guides and reference pages. Each Notes landing page links to the matching tag explorer.
 
 ## Syntax highlighting
 
@@ -75,9 +97,9 @@ sidebar:
 
 Up to three tags appear directly in the row. Four or more tags are collapsed behind a count that readers can open with a pointer or keyboard. Pages without dates or tags omit the row, as do splash pages. Dates and tags are also emitted as HTML metadata.
 
-The header links to `/tags/`, where readers can search English titles, descriptions, and tags. Japanese content uses localized tags and is queried separately at `/ja/tags/`; the two indexes are never combined. Keep tags short and reuse the same spelling within each language instead of creating near-duplicates.
+The header links to `/tags/`, where readers can search English documentation titles, descriptions, and tags. Japanese documentation uses localized tags and is queried separately at `/ja/tags/`; the two languages and the Notes scope are never combined. Keep tags short and reuse the same spelling within each language instead of creating near-duplicates.
 
-On mobile, the docs and tag links are inside the navigation menu. Pages without a sidebar have a compact menu that also includes theme and language controls.
+On mobile, the docs, optional Notes, and tag links are inside the navigation menu. Pages without a sidebar have a compact menu that also includes theme and language controls.
 
 Use `template: splash` only for wide pages such as the landing page. Regular documentation pages should keep the default layout so both navigation sidebars remain available.
 

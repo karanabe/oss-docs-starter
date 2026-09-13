@@ -2,7 +2,7 @@
 title: Getting started
 description: Adapt the documentation starter to your open-source project.
 publishedAt: 2026-08-30
-updatedAt: 2026-08-30
+updatedAt: 2026-09-13
 tags:
   - setup
   - beginner
@@ -37,10 +37,13 @@ const project = {
   description: 'Command-line tools for dependable release automation.',
   repository: 'https://github.com/acme/acme-cli',
   site: 'https://docs.acme.example',
+  features: {
+    notes: true,
+  },
 };
 ```
 
-These values drive the browser title, description metadata, canonical URL, sitemap, GitHub link, and edit links.
+The metadata values drive the browser title, description metadata, canonical URL, sitemap, GitHub link, and edit links. Set `features.notes` to `false` when the project does not need a Notes section.
 
 ## Choose the accent color
 
