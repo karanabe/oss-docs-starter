@@ -1,0 +1,95 @@
+---
+import { groupNotesByMonth, type NoteSummary, type NotesLocale } from '../lib/notes';
+
+interface Props {
+	locale: NotesLocale;
+	notes: NoteSummary[];
+}
+
+const { locale, notes } = Astro.props;
+const isJapanese = locale === 'ja';
+const groups = groupNotesByMonth(notes, locale);
+---
+
+<nav class="notes-archive" aria-labelledby="notes-archive-title">
+	<h2 id="notes-archive-title">{isJapanese ? 'Notesアーカイブ' : 'Notes archive'}</h2>
+	<ul>
+		<li>
+			<a href="#_top">
+				<span>{isJapanese ? 'すべてのメモ' : 'All notes'}</span>
+				<small>({notes.length})</small>
+			</a>
+		</li>
+		{
+			groups.map((group, index) => (
+				<li>
+					<details open={index === 0}>
+						<summary>
+							{group.key === 'undated' ? <span>{group.label}</span> : <time datetime={group.key}>{group.key}</time>}
+							<small>({group.notes.length})</small>
+						</summary>
+						<ul>
+							{group.notes.map((note) => <li><a href={note.href}>{note.title}</a></li>)}
+						</ul>
+					</details>
+				</li>
+			))
+		}
+	</ul>
+</nav>
+
+<style>
+	.notes-archive ul {
+		display: grid;
+		gap: 0.35rem;
+		margin: 0;
+		padding: 0;
+		list-style: none;
+	}
+
+	.notes-archive a,
+	.notes-archive summary {
+		display: flex;
+		align-items: baseline;
+		justify-content: flex-start;
+		gap: 0.4rem;
+		border-radius: 0.35rem;
+		padding: 0.2rem 0;
+	}
+
+	.notes-archive summary {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-xs);
+		cursor: pointer;
+	}
+
+	.notes-archive summary:hover,
+	.notes-archive details[open] > summary {
+		color: var(--sl-color-gray-2);
+	}
+
+	.notes-archive a:focus-visible,
+	.notes-archive summary:focus-visible {
+		outline: 2px solid var(--sl-color-accent);
+		outline-offset: 3px;
+	}
+
+	.notes-archive details ul {
+		gap: 0.2rem;
+		margin: 0.25rem 0 0.35rem 0.75rem;
+		padding-inline-start: 0.75rem;
+		border-inline-start: 1px solid var(--sl-color-hairline-light);
+	}
+
+	.notes-archive details a {
+		padding: 0.15rem 0;
+		line-height: 1.4;
+	}
+
+	.notes-archive small {
+		flex: none;
+		color: var(--sl-color-gray-4);
+		font-size: 0.9em;
+		font-variant-numeric: tabular-nums;
+	}
+</style>

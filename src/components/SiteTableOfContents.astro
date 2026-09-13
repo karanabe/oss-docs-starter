@@ -1,0 +1,19 @@
+---
+import Default from '@astrojs/starlight/components/TableOfContents.astro';
+import NotesArchive from './NotesArchive.astro';
+import { getPublishedNotes, type NotesLocale } from '../lib/notes';
+
+const { locale: routeLocale } = Astro.locals.starlightRoute;
+const locale: NotesLocale = routeLocale === 'ja' ? 'ja' : 'en';
+const notesPath = locale === 'ja' ? '/ja/notes/' : '/notes/';
+const isNotesLanding = Astro.url.pathname === notesPath;
+const notes = isNotesLanding ? await getPublishedNotes(locale) : [];
+---
+
+{
+	isNotesLanding && notes.length > 0 ? (
+		<NotesArchive locale={locale} notes={notes} />
+	) : (
+		<Default><slot /></Default>
+	)
+}

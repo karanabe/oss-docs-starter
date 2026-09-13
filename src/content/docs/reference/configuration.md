@@ -40,7 +40,7 @@ Starlight provides translated interface labels and connects matching pages in th
 
 ## Notes
 
-Notes is an optional place for dated project updates, decisions, and experiments. It uses regular Markdown pages under `src/content/docs/notes/`, with matching Japanese files under `src/content/docs/ja/notes/`. The landing pages introduce the section and list published notes by date, newest first. Notes is linked from the header and does not appear in the documentation sidebar.
+Notes is an optional place for dated project updates, decisions, and experiments. It uses regular Markdown pages organized under `src/content/docs/notes/YYYY-MM/`, with matching Japanese files under `src/content/docs/ja/notes/YYYY-MM/`. The landing pages introduce the section and group published notes by month, newest first. Notes is linked from the header and does not appear in the documentation sidebar.
 
 Turn the feature on or off in the `project.features` object in `astro.config.mjs`:
 
@@ -55,7 +55,9 @@ const project = {
 
 Set `notes` to `false` to omit the Notes header link, content routes, dedicated tag explorer, and Pagefind entries from development and production builds. The source files stay in place, so setting the value back to `true` restores the feature.
 
-To add a memo, copy the sample `notes/welcome.md` file to a stable, descriptive filename and update its frontmatter and body. Create the Japanese page at the matching relative path. `publishedAt` controls its position in the Notes index; add `updatedAt` when an existing note changes meaning.
+To add a memo, copy one of the eleven paired samples, such as `notes/2026-09/welcome.md`, to the appropriate `YYYY-MM` directory and update its frontmatter and body. Create the Japanese page at the matching relative path. The filename does not need to contain a date. `publishedAt`, not the source directory, controls its position and month in the Notes index. Set the optional `slug` field when the public URL should omit the source month, and add `updatedAt` when an existing note changes meaning.
+
+The right page sidebar on each Notes landing page lists compact `YYYY-MM (count)` rows. Expand a month to see direct links to all of its articles. When a locale has more than ten notes, Previous and Next controls appear below the main list and store the current position in the `?page=` URL parameter. JavaScript-disabled browsers receive the complete list instead. Change `NOTES_PER_PAGE` in `src/components/NotesIndex.astro` to adjust the threshold and page size.
 
 Documentation tags are searched at `/tags/` and `/ja/tags/`; these pages exclude Notes. Notes tags use `/notes/tags/` and `/ja/notes/tags/`, which exclude guides and reference pages. Each Notes landing page links to the matching tag explorer.
 

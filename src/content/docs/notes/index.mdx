@@ -9,9 +9,11 @@ next: false
 
 import NotesIndex from '../../../components/NotesIndex.astro';
 
-Use Notes for useful context that does not belong in a task-oriented guide or an exhaustive reference page. Add each memo as a Markdown file in this directory and give its Japanese translation the same filename under `ja/notes/`.
+Use Notes for useful context that does not belong in a task-oriented guide or an exhaustive reference page. Organize each memo under `notes/YYYY-MM/` and give its Japanese translation the same relative path under `ja/notes/`. The filename does not need to contain a date; `publishedAt` controls the order and month, while an optional `slug` can keep the public URL independent from the source path.
 
 [Browse Notes by tag](/notes/tags/) when you want to find a memo by subject.
+
+Notes are grouped by publication month. After the list grows past ten entries, use the page controls below it. In the archive on the right, expand a month to open any article directly.
 
 ## All notes
 

@@ -1,5 +1,6 @@
 ---
 import { getCollection } from 'astro:content';
+import { getNotesSource, isNotesSystemPage } from '../lib/notes';
 
 interface Props {
 	locale: 'en' | 'ja';
@@ -9,7 +10,6 @@ interface Props {
 const { locale, scope = 'docs' } = Astro.props;
 const isJapanese = locale === 'ja';
 const isNotesScope = scope === 'notes';
-const notesRoot = isJapanese ? 'ja/notes' : 'notes';
 const copy = isJapanese
 	? {
 			allTags: 'すべて',
@@ -41,13 +41,11 @@ const documents = (await getCollection('docs'))
 		const matchesLocale = isJapanese
 			? entry.id === 'ja' || entry.id.startsWith('ja/')
 			: entry.id !== 'ja' && !entry.id.startsWith('ja/');
-		const isNotesEntry = entry.id === notesRoot || entry.id.startsWith(`${notesRoot}/`);
+		const notesSource = getNotesSource(entry);
 		const matchesScope = isNotesScope
-			? entry.id.startsWith(`${notesRoot}/`) &&
-				entry.id !== `${notesRoot}/index` &&
-				entry.id !== `${notesRoot}/tags`
-			: !isNotesEntry;
-		return matchesLocale && matchesScope && !entry.data.draft && entry.data.tags.length > 0;
+			? notesSource?.locale === locale && !isNotesSystemPage(notesSource)
+			: matchesLocale && !notesSource;
+		return matchesScope && !entry.data.draft && entry.data.tags.length > 0;
 	})
 	.map((entry) => {
 		const path = entry.id.replace(/(^|\/)index$/, '$1').replace(/\/$/, '');

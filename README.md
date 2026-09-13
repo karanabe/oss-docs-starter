@@ -69,7 +69,7 @@ src/content/docs/
 ├── guides/getting-started.md         → /guides/getting-started/
 ├── notes/index.mdx                   → /notes/
 ├── notes/tags.mdx                    → /notes/tags/
-├── notes/welcome.md                  → /notes/welcome/
+├── notes/2026-09/welcome.md          → /notes/welcome/ (via `slug`)
 ├── reference/configuration.md        → /reference/configuration/
 ├── tags.mdx                          → /tags/
 └── ja/
@@ -77,7 +77,7 @@ src/content/docs/
     ├── guides/getting-started.md     → /ja/guides/getting-started/
     ├── notes/index.mdx               → /ja/notes/
     ├── notes/tags.mdx                → /ja/notes/tags/
-    ├── notes/welcome.md              → /ja/notes/welcome/
+    ├── notes/2026-09/welcome.md      → /ja/notes/welcome/ (via `slug`)
     ├── reference/configuration.md    → /ja/reference/configuration/
     └── tags.mdx                      → /ja/tags/
 ```
@@ -133,9 +133,11 @@ Escape a literal dollar sign as `\$` when it could otherwise be interpreted as m
 
 ## 5. Publish project Notes
 
-Notes is a small blog-like section for dated project updates, decisions, experiments, and discoveries. Add English Markdown files to `src/content/docs/notes/` and matching Japanese files to `src/content/docs/ja/notes/`. The included landing pages introduce Notes and list entries by `publishedAt`, newest first. Notes stays out of the documentation sidebar.
+Notes is a small blog-like section for dated project updates, decisions, experiments, and discoveries. Organize English Markdown files under `src/content/docs/notes/YYYY-MM/` and matching Japanese files under `src/content/docs/ja/notes/YYYY-MM/`. The included landing pages introduce Notes and group entries by publication month, newest first. Notes stays out of the documentation sidebar.
 
-Copy `notes/welcome.md` to a stable, descriptive filename in both language directories, then update its frontmatter and body. Add `updatedAt` when a published note changes meaning.
+Copy one of the eleven paired samples, such as `notes/2026-09/welcome.md`, to the appropriate month directory in both languages, then update its frontmatter and body. The filename does not need to contain a date. `publishedAt`, rather than the directory name, controls sorting and monthly grouping. Add an optional `slug` when the public URL should not mirror the source directories, and add `updatedAt` when a published note changes meaning.
+
+The right page sidebar becomes a compact monthly Notes archive on each landing page. Expand a `YYYY-MM (count)` row to see direct links to every article in that month. The main list adds Previous and Next controls only after it grows beyond ten entries and preserves the selected page in the `?page=` URL parameter. Change `NOTES_PER_PAGE` in `src/components/NotesIndex.astro` if the project needs a different page size. Without JavaScript, the landing page keeps every note visible.
 
 Documentation tags are searched at `/tags/` and `/ja/tags/`. Notes has independent tag explorers at `/notes/tags/` and `/ja/notes/tags/`, linked from each Notes landing page. The two scopes do not mix results.
 
@@ -157,14 +159,15 @@ On mobile, the docs, optional Notes, and tag links move into the navigation menu
 
 The documentation tag explorers at `/tags/` and `/ja/tags/` exclude Notes. The Notes explorers at `/notes/tags/` and `/ja/notes/tags/` exclude guides and reference pages. Each explorer also stays within its language, so Japanese queries never return English fallback content. The regular Pagefind search index still covers both content types and keeps its language indexes separate.
 
-Use stable, descriptive filenames. Moving a content file changes its public URL, so add an Astro redirect when preserving an old published route matters.
+Use stable, descriptive filenames. Moving a content file changes its public URL unless its frontmatter defines a stable `slug`; add an Astro redirect when changing an already published route.
 
 ## 7. Adjust the visual system
 
 - `src/styles/theme.css` contains project color tokens and neutral surfaces.
 - `src/styles/site.css` contains English and Japanese typography, compact page metadata, consistent aside surfaces, navigation states, code-block and diagram finishing, responsive rules, and the landing page.
 - `src/components/PageTitle.astro` renders the page description and optional date and tags. `PrimaryNavigation.astro` supplies the shared docs, optional Notes, and tag links used in desktop and mobile navigation.
-- `src/components/NotesIndex.astro` renders each locale's Notes list in reverse chronological order. `TagExplorer.astro` keeps documentation and Notes tags in separate scopes.
+- `src/lib/notes.ts` selects, sorts, and groups Notes for the shared landing-page UI.
+- `src/components/NotesIndex.astro` renders each locale's paginated Notes list. `NotesArchive.astro` and `SiteTableOfContents.astro` replace the landing page's right table of contents with the monthly archive. `TagExplorer.astro` keeps documentation and Notes tags in separate scopes.
 - `astro.config.mjs` selects Slack Ochin for light code blocks and Tokyo Night for dark code blocks.
 
 Both languages share the same local font stack: Inter Variable, Inter, system UI fonts, then Segoe UI Variable and Segoe UI. Japanese body text uses the browser and operating system's fallback. Blockquotes select Source Han Code JP's local upright faces for Japanese characters when installed, allowing synthesized italics because that family's italic faces leave Japanese glyphs upright. Other characters and systems without that font use the shared stack. Code has a separate monospace stack, starting with SFMono-Regular and Consolas. No font files are bundled or downloaded; installed fonts and browser settings determine the rendered faces.

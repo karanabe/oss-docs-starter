@@ -1,49 +1,32 @@
 ---
-import { getCollection } from 'astro:content';
+import { getPublishedNotes, groupNotesByMonth, type NotesLocale } from '../lib/notes';
 
 interface Props {
-	locale: 'en' | 'ja';
+	locale: NotesLocale;
 }
 
 const { locale } = Astro.props;
 const isJapanese = locale === 'ja';
-const notesRoot = isJapanese ? 'ja/notes' : 'notes';
+const notes = await getPublishedNotes(locale);
+const groups = groupNotesByMonth(notes, locale);
+const notePositions = new Map(notes.map((note, index) => [note.href, index]));
+const NOTES_PER_PAGE = 10;
+const pageCount = Math.ceil(notes.length / NOTES_PER_PAGE);
 const copy = isJapanese
 	? {
 			empty: 'まだメモはありません。最初のMarkdownファイルを追加すると、ここに表示されます。',
+			navigation: 'Notes一覧のページ',
+			next: '次へ',
+			previous: '前へ',
 			updated: '更新',
 		}
 	: {
 			empty: 'No notes yet. Add the first Markdown file and it will appear here.',
+			navigation: 'Notes list pages',
+			next: 'Next',
+			previous: 'Previous',
 			updated: 'Updated',
 		};
-
-const notes = (await getCollection('docs'))
-	.filter((entry) =>
-		entry.id.startsWith(`${notesRoot}/`) &&
-		entry.id !== `${notesRoot}/index` &&
-		entry.id !== `${notesRoot}/tags` &&
-		!entry.data.draft
-	)
-	.map((entry) => {
-		const path = entry.id.replace(/(^|\/)index$/, '$1').replace(/\/$/, '');
-		return {
-			date: entry.data.updatedAt ?? entry.data.publishedAt,
-			description: entry.data.description,
-			href: `/${path}/`,
-			publishedAt: entry.data.publishedAt,
-			tags: entry.data.tags,
-			title: entry.data.title,
-			updatedAt: entry.data.updatedAt,
-		};
-	})
-	.sort((a, b) => {
-		const byDate =
-			(b.publishedAt?.getTime() ?? b.updatedAt?.getTime() ?? 0) -
-			(a.publishedAt?.getTime() ?? a.updatedAt?.getTime() ?? 0);
-		return byDate || a.title.localeCompare(b.title, locale);
-	});
-
 const dateFormatter = new Intl.DateTimeFormat(isJapanese ? 'ja-JP' : 'en', {
 	year: 'numeric',
 	month: 'short',
@@ -52,46 +35,183 @@ const dateFormatter = new Intl.DateTimeFormat(isJapanese ? 'ja-JP' : 'en', {
 });
 ---
 
-<div class="notes-index not-content">
+<notes-index
+	class="notes-index not-content"
+	data-locale={locale}
+	data-page-count={pageCount}
+	data-page-size={NOTES_PER_PAGE}
+>
 	{
 		notes.length > 0 ? (
-			<ol class="notes-list">
-				{notes.map((note) => (
-					<li>
-						<article>
-							<a href={note.href}>
-								<h3>{note.title}</h3>
-								{note.description && <p>{note.description}</p>}
-							</a>
-							{(note.date || note.tags.length > 0) && (
-								<footer>
-									{note.date && (
-										<time datetime={note.date.toISOString()}>
-											{note.updatedAt && `${copy.updated} `}{dateFormatter.format(note.date)}
-										</time>
-									)}
-									{note.tags.length > 0 && (
-										<ul aria-label={isJapanese ? 'タグ' : 'Tags'}>
-											{note.tags.map((tag) => <li>{tag}</li>)}
-										</ul>
-									)}
-								</footer>
-							)}
-						</article>
-					</li>
-				))}
-			</ol>
+			<>
+				<div class="notes-groups">
+					{groups.map((group) => (
+						<section class="notes-month" data-notes-group>
+							<h3 id={`notes-${group.key}`}>
+								{group.key === 'undated' ? <span>{group.label}</span> : <time datetime={group.key}>{group.key}</time>}
+							</h3>
+							<ol class="notes-list">
+								{group.notes.map((note) => (
+									<li data-note data-note-index={notePositions.get(note.href)}>
+										<article>
+											<a href={note.href}>
+												<h4>{note.title}</h4>
+												{note.description && <p>{note.description}</p>}
+											</a>
+											{(note.displayDate || note.tags.length > 0) && (
+												<footer>
+													{note.displayDate && (
+														<time datetime={note.displayDate.toISOString()}>
+															{note.updatedAt && `${copy.updated} `}
+															{dateFormatter.format(note.displayDate)}
+														</time>
+													)}
+													{note.tags.length > 0 && (
+														<ul aria-label={isJapanese ? 'タグ' : 'Tags'}>
+															{note.tags.map((tag) => <li>{tag}</li>)}
+														</ul>
+													)}
+												</footer>
+											)}
+										</article>
+									</li>
+								))}
+							</ol>
+						</section>
+					))}
+				</div>
+
+				{pageCount > 1 && (
+					<nav class="notes-pagination" aria-label={copy.navigation} hidden data-notes-pagination>
+						<button type="button" data-notes-previous>{copy.previous}</button>
+						<span aria-live="polite" aria-atomic="true" data-notes-page-status />
+						<button type="button" data-notes-next>{copy.next}</button>
+					</nav>
+				)}
+			</>
 		) : (
 			<p class="notes-empty">{copy.empty}</p>
 		)
 	}
-</div>
+</notes-index>
+
+<script>
+	class PaginatedNotesIndex extends HTMLElement {
+		connectedCallback() {
+			if (this.dataset.enhanced) return;
+			this.dataset.enhanced = 'true';
+
+			const locale = this.dataset.locale || 'en';
+			const pageSize = Number.parseInt(this.dataset.pageSize || '10', 10);
+			const pageCount = Number.parseInt(this.dataset.pageCount || '1', 10);
+			const notes = [...this.querySelectorAll<HTMLElement>('[data-note]')];
+			const groups = [...this.querySelectorAll<HTMLElement>('[data-notes-group]')];
+			const pagination = this.querySelector<HTMLElement>('[data-notes-pagination]');
+			const previous = this.querySelector<HTMLButtonElement>('[data-notes-previous]');
+			const next = this.querySelector<HTMLButtonElement>('[data-notes-next]');
+			const status = this.querySelector<HTMLElement>('[data-notes-page-status]');
+
+			if (!pagination || !previous || !next || !status || pageCount < 2) return;
+
+			const clampPage = (page: number) => Math.min(Math.max(page, 1), pageCount);
+			const pageForHash = () => {
+				const target = window.location.hash
+					? document.getElementById(decodeURIComponent(window.location.hash.slice(1)))
+					: null;
+				const firstNote = target?.closest('[data-notes-group]')?.querySelector<HTMLElement>('[data-note]');
+				const index = Number.parseInt(firstNote?.dataset.noteIndex || '', 10);
+				return Number.isNaN(index) ? undefined : Math.floor(index / pageSize) + 1;
+			};
+			const pageFromLocation = () => {
+				const hashPage = pageForHash();
+				if (hashPage) return clampPage(hashPage);
+				const requested = Number.parseInt(new URL(window.location.href).searchParams.get('page') || '1', 10);
+				return clampPage(Number.isNaN(requested) ? 1 : requested);
+			};
+			let currentPage = pageFromLocation();
+
+			const render = (focusFirst = false) => {
+				const firstIndex = (currentPage - 1) * pageSize;
+				const lastIndex = firstIndex + pageSize;
+
+				for (const note of notes) {
+					const index = Number.parseInt(note.dataset.noteIndex || '', 10);
+					note.hidden = index < firstIndex || index >= lastIndex;
+				}
+				for (const group of groups) {
+					group.hidden = !group.querySelector('[data-note]:not([hidden])');
+				}
+
+				previous.disabled = currentPage === 1;
+				next.disabled = currentPage === pageCount;
+				status.textContent = locale === 'ja'
+					? `${currentPage} / ${pageCount} ページ`
+					: `Page ${currentPage} of ${pageCount}`;
+				pagination.hidden = false;
+
+				if (focusFirst) {
+					this.querySelector<HTMLAnchorElement>('[data-note]:not([hidden]) article > a')?.focus();
+				}
+			};
+
+			const setPageAddress = () => {
+				const url = new URL(window.location.href);
+				url.hash = '';
+				if (currentPage === 1) url.searchParams.delete('page');
+				else url.searchParams.set('page', String(currentPage));
+				window.history.pushState({}, '', url);
+			};
+			const changePage = (nextPage: number) => {
+				currentPage = clampPage(nextPage);
+				setPageAddress();
+				render(true);
+			};
+
+			previous.addEventListener('click', () => changePage(currentPage - 1));
+			next.addEventListener('click', () => changePage(currentPage + 1));
+
+			window.addEventListener('popstate', () => {
+				currentPage = pageFromLocation();
+				render();
+				if (window.location.hash) {
+					requestAnimationFrame(() => {
+						document.getElementById(decodeURIComponent(window.location.hash.slice(1)))?.scrollIntoView();
+					});
+				}
+			});
+
+			render();
+			if (window.location.hash) {
+				requestAnimationFrame(() => {
+					document.getElementById(decodeURIComponent(window.location.hash.slice(1)))?.scrollIntoView();
+				});
+			}
+		}
+	}
+
+	if (!customElements.get('notes-index')) {
+		customElements.define('notes-index', PaginatedNotesIndex);
+	}
+</script>
 
 <style>
 	.notes-index {
-		display: grid;
-		gap: 1rem;
+		display: block;
 		margin-top: 2rem;
+	}
+
+	.notes-groups {
+		display: grid;
+		gap: 2rem;
+	}
+
+	.notes-month h3 {
+		margin: 0 0 0.75rem;
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+		font-weight: 600;
+		letter-spacing: 0.035em;
+		line-height: 1.4;
 	}
 
 	.notes-list {
@@ -121,12 +241,13 @@ const dateFormatter = new Intl.DateTimeFormat(isJapanese ? 'ja-JP' : 'en', {
 		border-color: var(--project-accent-border);
 	}
 
-	.notes-list article > a:focus-visible {
+	.notes-list article > a:focus-visible,
+	.notes-pagination button:focus-visible {
 		outline: 2px solid var(--sl-color-accent);
 		outline-offset: 4px;
 	}
 
-	.notes-list h3 {
+	.notes-list h4 {
 		margin: 0;
 		color: var(--sl-color-white);
 		font-size: var(--sl-text-xl);
@@ -168,6 +289,54 @@ const dateFormatter = new Intl.DateTimeFormat(isJapanese ? 'ja-JP' : 'en', {
 		background: var(--project-accent-soft);
 		padding: 0.2rem 0.5rem;
 		color: var(--sl-color-accent-high);
+	}
+
+	.notes-pagination {
+		display: grid;
+		grid-template-columns: 1fr auto 1fr;
+		align-items: center;
+		gap: 1rem;
+		margin-top: 2rem;
+	}
+
+	.notes-pagination[hidden] {
+		display: none;
+	}
+
+	.notes-pagination button {
+		border: 1px solid var(--sl-color-gray-5);
+		border-radius: 0.65rem;
+		background: var(--sl-color-gray-6);
+		padding: 0.65rem 0.85rem;
+		color: var(--sl-color-white);
+		font: inherit;
+		font-weight: 600;
+		cursor: pointer;
+	}
+
+	.notes-pagination button:first-child {
+		justify-self: start;
+	}
+
+	.notes-pagination button:last-child {
+		justify-self: end;
+	}
+
+	.notes-pagination button:hover:not(:disabled) {
+		border-color: var(--project-accent-border);
+		background: var(--project-accent-soft);
+	}
+
+	.notes-pagination button:disabled {
+		color: var(--sl-color-gray-4);
+		cursor: not-allowed;
+	}
+
+	.notes-pagination span {
+		color: var(--sl-color-gray-3);
+		font-size: var(--sl-text-sm);
+		font-variant-numeric: tabular-nums;
+		white-space: nowrap;
 	}
 
 	.notes-empty {
